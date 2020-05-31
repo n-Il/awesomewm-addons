@@ -1,7 +1,7 @@
 -- Created n-Il 12/14/2019
 -- Improved n-Il 05/31/2020
 -- place this in ~/.config/awesome/startup.lua
--- add _ to rc.lua
+-- add require("startup")() to the end of  rc.lua
 -- 
 
 
