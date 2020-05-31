@@ -2,11 +2,8 @@
 -- Improved n-Il 05/31/2020
 -- place this in ~/.config/awesome/startup.lua
 -- add require("startup")() to the end of  rc.lua
--- 
 
 
--- startup = require("awesomewm-startup")
--- startup.startups()
 awful = require("awful")
 naughty = require("naughty")
 gears = require("gears")
