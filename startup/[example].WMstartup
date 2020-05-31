@@ -1,0 +1,5 @@
+#Lines starting with a '#' will be ignored
+#Error-checking is nonexistant at this point, so please follow the examples.
+#Each line is 3 values seperated by commas. The first value is the Screen(This is an INT, so do not enter a string), the Second Value is the tag, and the Third Value is the program.
+'1','1','xfce4-terminal -e 'sh -c "echo 'hi';exec bash"''
+#'1','2','firefox'
