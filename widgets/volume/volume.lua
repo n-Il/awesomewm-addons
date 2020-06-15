@@ -12,7 +12,8 @@ alternatively, we can act on the default sink using @DEFAULT_SINK@
 
 Known Issues:
 When you change sinks, it doesn't update immediately. Guessing it would break without any sinks as well.
-If you use any other method of changing volume levels, then set the timer down from 3000 so that it will pick up your updates, I'm not, so I'm not going to write a listener for changes.
+If you use any other method of changing volume levels, then set the timer down from 30 so that it will pick up your updates, I'm not, so I'm not going to write a listener for changes.
+this doesn't update on multiple screens when you change the level
 
 ]]-- Thanks Tommi Kyntola from stackexchange for this:  pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'
 
@@ -82,7 +83,7 @@ local function new() -- format
     
 
     w._timer = timer.weak_start_new(3000, w._private.vol_update_cb)-- starts timer
-    w:force_update()-- run now so we don't have to wait 30 seconds for the first update
+    w:force_update()-- run now
     return w
 end
 
