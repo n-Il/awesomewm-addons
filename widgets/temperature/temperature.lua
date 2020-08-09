@@ -4,7 +4,7 @@
 --
 -- Based on the timing system of the text clock widget. Check Out Julian Danjous much more thorough work at /usr/share/awesome/lib/wibox/widget/textclock.lua.
 -- 
---  IMPORTANT: I wrote this quickly and this will LIKELY NOT WORK on your system. I just grabbed the temp from a specific line on this PC's sensors output. This will likely not correlate to the package temp in all cases as output varies greatly between systems.
+--  IMPORTANT: I grab the line from sensors starting with Tdie:(9 spaces), if your sensors output doesn't use the same format, then this will need to be adjusted.
 --
 --  n-Il 06/14/2020
 --
@@ -15,7 +15,11 @@ local textbox = require("wibox.widget.textbox")
 local timer = require("gears.timer")
 local gtable = require("gears.table")
 local awful = require("awful")
-local command = "sensors | head -3 | tail - 1 | grep -Po \"\\+.*?C\" | head -1"
+
+
+--Learned how to positive lookbehind
+local command = "sensors | grep -Po \"(?<=Tdie:\\s{9})\\+.*?C\""
+
 
 local temp = {}
 
