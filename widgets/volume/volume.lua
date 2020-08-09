@@ -3,19 +3,11 @@
 Simple Volume display and control widget built on Arch Linux to display volume levels of pulseaudio.
 n-Il 06/13/2020
 
-get sink using pactl list sinks short
-raise and lower using:
-sh -c "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%"
-sh -c "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%"
-Don't need the first command really?
-alternatively, we can act on the default sink using @DEFAULT_SINK@
-
 Known Issues:
+multiple screens don't update all instances of the widget
 When you change sinks, it doesn't update immediately. Guessing it would break without any sinks as well.
-If you use any other method of changing volume levels, then set the timer down from 30 so that it will pick up your updates, I'm not, so I'm not going to write a listener for changes.
-this doesn't update on multiple screens when you change the level
-
-]]-- Thanks Tommi Kyntola from stackexchange for this:  pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'
+If you use any other method of changing volume levels, then set the timer down from 3000 so that it will pick up your updates, I'm not, so I'm not going to write a listener for changes.
+]] 
 
 local setmetatable = setmetatable
 local textbox = require("wibox.widget.textbox")
@@ -23,13 +15,14 @@ local timer = require("gears.timer")
 local gtable = require("gears.table")
 local awful = require("awful")
 
-local getVol = "pactl list sinks | grep \'^[[:space:]]Volume:\' | head -n $(( $SINK + 1 )) | tail -n 1 | sed -e \'s,.* \\([0-9][0-9]*\\)%.*,\\1,\'"
+--brettinternet from stackexchange 's command works better
+local getVol = "pacmd list-sinks|grep -A 15 \'* index\'| awk \'/volume: front/{ print $5 }\' | sed \'s/[%|,]//g\'"
 
 --Commands need to run in order to prevent a mismatch information and reality,so it's easiest to run them into the shell in order
 local commands = {
 get= getVol
-,raise = "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +1%"..";"..getVol
-,lower = "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -1%"..";"..getVol
+,raise = "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ +1%"..";"..getVol
+,lower = "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -1%"..";"..getVol
 }
 
 local vol = {}
@@ -82,8 +75,8 @@ local function new() -- format
     end
     
 
-    w._timer = timer.weak_start_new(3000, w._private.vol_update_cb)-- starts timer
-    w:force_update()-- run now
+    w._timer = timer.weak_start_new(30, w._private.vol_update_cb)-- starts timer
+    w:force_update()-- run now so we don't have to wait 30 seconds for the first update
     return w
 end
 
