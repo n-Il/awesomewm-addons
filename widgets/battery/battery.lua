@@ -16,7 +16,7 @@ local timer = require("gears.timer")
 local gtable = require("gears.table")
 local awful = require("awful")
 local readLocation = "/sys/class/power_supply/BAT0/capacity"
-
+local naughty = require("naughty")
 
 local bat = {}
 
@@ -33,7 +33,12 @@ local function new() -- format
     function w._private.bat_update_cb()
 	local command = "cat "..readLocation
 	awful.spawn.easy_async_with_shell(command, function(out)
-        	w:set_markup(('[bat:'..string.sub(out,0,-2)..']'))-- sets the markup for the widget to the output of our command. Sub to remove newline
+        	batLevel = string.sub(out,0,-2)
+                batLevelDec = tonumber(batLevel)
+                if batLevelDec < 25 then
+                    naughty.notify({preset = naughty.config.presets.critical,title = "Low Battery Warning"})
+                end
+                w:set_markup(('[bat:'..batLevel..']'))-- sets the markup for the widget to the output of our command. Sub to remove newline
     	end)
 
         w._timer:again()
