@@ -33,7 +33,7 @@ local function new() -- format
                     w:set_markup(('[<span foreground="#00FF00">没有</span>更新]'))-- no update, méi yǒu gēng xīn
                     updatesneeded = 0
                 else
-                    w:set_markup(('[<span foreground="FF0000">有</span>更新]'))-- there is update, yǒu gēng xīn
+                    w:set_markup(('[<span foreground="#FF0000">有</span>更新]'))-- there is update, yǒu gēng xīn
                     if updatesneeded == 0 then
                         --notify only on the first time it detects a software updatea
                         naughty.notify({title="UPDATES NEEDED",text=output});
