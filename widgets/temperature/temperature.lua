@@ -18,7 +18,8 @@ local awful = require("awful")
 
 
 --Learned how to positive lookbehind
-local command = "sensors | grep -Po \"(?<=Tdie:\\s{9})\\+.*?C\""
+--local command = "sensors | grep -Po \"(?<=Tdie:\\s{9})\\+.*?C\""
+local command = "sensors | grep -Po \"(?<=CPU:\\s{10})\\+.*?C\""
 
 
 local temp = {}

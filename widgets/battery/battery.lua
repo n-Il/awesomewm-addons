@@ -6,7 +6,7 @@
 --
 -- If you're here to add features after downloading this from a repo, I'd suggest checking out Pavel Makhov or github.com/Streetturtle's battery widget as his is much more comprehensive. 
 --
---  n-Il 12/16/2020
+--  n-Il 05/30/2020
 --
 ---------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ local gtable = require("gears.table")
 local awful = require("awful")
 local readLocation = "/sys/class/power_supply/BAT0/capacity"
 local naughty = require("naughty")
-local readChargingLocation = "/sys/class/power_supply/BAT0/status"
+local chargingStatusReadLocation = "cat /sys/class/power_supply/AC/online"
 
 local bat = {}
 
@@ -29,6 +29,21 @@ end
 -- function
 local function new() -- format
     local w = textbox()
+    w:buttons(
+        awful.util.table.join(
+            awful.button({},3,function()
+                --on right click, test
+                awful.spawn.easy_async_with_shell(command, function(out)
+                    naughty.notify({preset = naughty.config.presets.critical,title = "Testing Battery",timeout = 35})
+        	end)
+                
+            end),
+            awful.button({},1,function()
+                --on left click, update the battery
+                w:force_update()-- run now
+            end)
+        )
+    )
     gtable.crush(w, bat, true)--makes the first table's elements into the elements of the second table.
 
     function w._private.bat_update_cb()
@@ -37,11 +52,11 @@ local function new() -- format
         	batLevel = string.sub(out,0,-2)
                 batLevelDec = tonumber(batLevel)
                 if batLevelDec < 25 then
-                    local statuscmd = "cat "..readChargingLocation
-                    awful.spawn.easy_async_with_shell(statuscmd,function(out)
-                        batStatus = string.sub(out,0,-2) 
-                        if batStatus == "Discharging" then--!Charging is better, but Im not sure if all batteries follow this status format as non-standard chargers can make this status Unknown
-                            naughty.notify({preset = naughty.config.presets.critical,title = "Low Battery Warning",timeout = 55})
+                    awful.spawn.easy_async_with_shell(chargingStatusReadLocation,function(out2) 
+        	        charging = string.sub(out2,0,-2)
+                        --naughty.notify({preset = naughty.config.presets.critical,title = "["..charging.."]",timeout = 35})
+                        if (charging == "0") then
+                            naughty.notify({preset = naughty.config.presets.critical,title = "Low Battery Warning",timeout = 35})
                         end
                     end)
                 end
